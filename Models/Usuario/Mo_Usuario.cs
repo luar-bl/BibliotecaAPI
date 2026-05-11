@@ -14,8 +14,8 @@ namespace ProyectoBibliotecaAPI.Models.Usuario
         [PrimaryKey("oid",false)]
         public Guid Oid { get; set; }
         [Column("email")]
-        public string email { get; set; }
+        public string Email { get; set; }
         [Column("passwordhash")]
-        public string password { get; set; }
+        public string Password { get; set; }
     }
 }

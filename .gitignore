@@ -66,6 +66,10 @@ artifacts/
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
+# Ignorar archivos de configuración locales
+appsettings.json
+appsettings.Development.json   
+
 # StyleCop
 StyleCopReport.xml
 

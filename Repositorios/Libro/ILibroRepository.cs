@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProyectoBibliotecaAPI.Models.Libro;
+﻿using ProyectoBibliotecaAPI.Models.Libro;
 
 namespace ProyectoBibliotecaAPI.Repositorios.Libro
 {

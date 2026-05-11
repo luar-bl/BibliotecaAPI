@@ -15,16 +15,16 @@ namespace ProyectoBibliotecaAPI.Repositorios.Auth
         public async Task<bool> ExisteUsuarioAsync(Mo_Usuario user)
         {
             var existe = await _supabaseClient.From<Mo_Usuario>()
-                                               .Where(x => x.email == user.email).Single();
+                                               .Where(x => x.Email == user.Email).Single();
 
             //DEVUELVE TRUE OR FALSE.
             return existe != null;
         }
 
-        public async Task<Mo_Usuario?> LoginUsuarioAsync(Mo_Usuario loginUsuario)
+        public async Task<Mo_Usuario?> LoginUsuarioAsync(string email)
         {
             var obtenerUsuarioBBDD = await _supabaseClient.From<Mo_Usuario>()
-                                                    .Where(x => x.email == loginUsuario.email)
+                                                    .Where(x => x.Email == email)
                                                     .Single();
             return obtenerUsuarioBBDD;
         }

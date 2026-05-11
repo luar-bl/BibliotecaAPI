@@ -1,6 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.IdentityModel.Tokens;
+//using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using ProyectoBibliotecaAPI.Repositorios.Auth;
+using ProyectoBibliotecaAPI.Repositorios.Biblioteca;
 using ProyectoBibliotecaAPI.Repositorios.Libro;
+using ProyectoBibliotecaAPI.Servicios.Auth;
 using ProyectoBibliotecaAPI.Servicios.Libro;
 using System.Text;
 
@@ -9,10 +15,43 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+
+
+
+#region -- SWAGGER --
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    // Definición del esquema de seguridad JWT
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Escribe: Bearer {tu token}"
+    });
+
+    // Indicar que todos los endpoints requieren el token
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
+});
+#endregion
 
 #region -- Injeccion -
+
+builder.Services.AddScoped<LibroService>(); 
+builder.Services.AddScoped<LibroRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<ILibroService, LibroService>();
+builder.Services.AddScoped<IBibliotecaRepository, BibliotecaRepository>();
 builder.Services.AddScoped<ILibroRepository, LibroRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 #endregion
 
@@ -54,13 +93,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 // Configure the HTTP request pipeline.
+//app.UseSwagger(options =>
+//{
+//    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+//});
+//app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication(); //Middleware. VALIDA EL TOKEN EN CADA PETICIÓN.
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
